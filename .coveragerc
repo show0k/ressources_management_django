@@ -1,0 +1,3 @@
+[run]
+include = flowers_ressources_management/*
+omit = *migrations*
