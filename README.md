@@ -1,0 +1,1 @@
+# ressources_management_django

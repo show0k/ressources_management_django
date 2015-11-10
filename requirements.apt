@@ -23,6 +23,9 @@ libwebp-dev
 ##django-extensions
 graphviz-dev
 
+# Ldap
+libsasl2-dev python-dev libldap2-dev libssl-dev
+
 ##hitch
 python-setuptools
 python3-dev
