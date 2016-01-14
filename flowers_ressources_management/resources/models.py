@@ -8,7 +8,6 @@ from django.utils.html import mark_safe
 from django.core.exceptions import ValidationError
 
 
-
 MAX_PRICE_DIGITS = 10
 OK_STATE = 'OK'
 
@@ -43,7 +42,7 @@ class Reference(models.Model):
 
 class Item(models.Model):
 
-    """Unique object designed by its name or its pk
+    """unique object designed by its name or its primary key
         Example : poppy-white, darth-poppy, """
     name = models.CharField(
         max_length=70, blank=True, help_text="Can be let blank for little items like motors")  # Poppy-pink, poppy-white, ...
@@ -90,7 +89,7 @@ class Item(models.Model):
         else:
             return str(state)
 
-    # Signal
+    # Add a Signal
     def initiate_state(self, state=OK_STATE):
         state_obj = State.objects.get(name=state)
         init_evt = ItemEvent(
@@ -103,17 +102,39 @@ class Item(models.Model):
         init_evt.save()
 
 
-class State(models.Model):
+class WorkingState(models.Model):
 
-    """Condition of an item.
-        example : BROKEN, OK, LENT
+    """Working condition of an item.
+        example : REPARATION, BROKEN, WORKING
     """
     name = models.CharField(max_length=200, unique=True)
     description = models.TextField(null=True, blank=True, help_text="Additional information about this state")
 
-
     def __str__(self):
         return "%s : %s" % (self.name, self.description)
+
+
+class State(models.Model):
+
+    """General state of an Item
+    """
+    WORKS = 'OK'
+    BROKEN = 'BK'
+    REPARATION = 'RE'
+    WORKING_STATE = (
+        (WORKS, 'Works well'),
+        (BROKEN, 'Broken'),
+        (REPARATION, 'In reparation'))
+
+    name = models.CharField(max_length=200, unique=True)
+    working_state = models.CharField(max_length=2,
+                                     choices=WORKING_STATE,
+                                     default=WORKS)
+    description = models.TextField(null=True, blank=True, help_text="Additional information about this state")
+    active = models.BooleanField(default=True,
+        help_text="The current state of an Item must be active. If it is an old item, it must be unchecked.")
+    creation_date = models.DateField(default=datetime.date.today)
+    passived_date = models.DateField(default=datetime.date.today)
 
 
 class ItemEvent(models.Model):
@@ -128,6 +149,7 @@ class ItemEvent(models.Model):
     estimated_end_time = models.TimeField(blank=True)
     description = models.TextField()
 
+#
 
 
 # ################################################################################

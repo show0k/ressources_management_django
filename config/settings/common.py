@@ -42,7 +42,7 @@ THIRD_PARTY_APPS = (
     'allauth',  # registration
     'allauth.account',  # registration
     'allauth.socialaccount',  # registration
-    'django_baker',
+    'django_baker', #
 )
 
 # Apps specific for this project go here.
@@ -215,7 +215,10 @@ WSGI_APPLICATION = 'config.wsgi.application'
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend',
+    'django_auth_ldap.backend.LDAPBackend',
+    'django.contrib.auth.backends.ModelBackend',
 )
+
 
 # Some really nice defaults
 ACCOUNT_AUTHENTICATION_METHOD = 'username'
@@ -237,14 +240,23 @@ ADMIN_URL = r'^admin/'
 
 # Your common stuff: Below this line define 3rd party library settings
 
-# # LDAP authentication
-# AUTHENTICATION_BACKENDS = (
-#     'django_auth_ldap.backend.LDAPBackend',
-#     'django.contrib.auth.backends.ModelBackend',
-# )
 # AUTH_LDAP_BIND_DN = ""
 # AUTH_LDAP_BIND_PASSWORD = ""
 # AUTH_LDAP_USER_DN_TEMPLATE = "uid=%(user)s,ou=bordeaux,ou=futurs,ou=users,dc=futurs,dc=inria,dc=fr"
+
+# # Internet :
+# AUTHENTICATION_BACKENDS = (
+#     'django_auth_ldap.backend.LDAPBackend',
+# )
+
+# AUTH_LDAP_SERVER_URI = "ldap://127.0.0.1:389"
+# AUTH_LDAP_USER_SEARCH = LDAPSearch("ou=People,dc=local,dc=domain,dc=com",
+#                                    ldap.SCOPE_SUBTREE, "(uid=%(user)s)")
+
+# AUTH_LDAP_USER_ATTR_MAP = {
+#     "first_name": "givenName",
+#     "last_name": "sn",
+# }
 
 # import logging
 # logger = logging.getLogger('django_auth_ldap')
