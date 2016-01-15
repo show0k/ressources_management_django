@@ -6,6 +6,7 @@ from django import forms
 from django.forms import Form, ModelForm, ModelChoiceField, CharField
 from django.utils.html import mark_safe
 from django.core.exceptions import ValidationError
+from django.contrib.auth.models import User
 
 
 MAX_PRICE_DIGITS = 10
@@ -114,40 +115,60 @@ class WorkingState(models.Model):
         return "%s : %s" % (self.name, self.description)
 
 
-class State(models.Model):
+
+class CommonEvent(models.Model):
+    """ Abstract class for Loan and State"""
+    creator = models.ForeignKey(User, help_text="User who create this event")
+    is_active = models.BooleanField('active', default=True)
+    creation_date = models.DateTimeField('creation date', default=timezone.now)
+    last_modification_date = models.DateTimeField('last modification date', default=timezone.now)
+    passived_date = models.DateTimeField('passived date', null=True, default=None,
+                                     help_text="Date were this state became inactive. Automatically set when the is_active field become unchecked.")
+    description = models.TextField(null=True, blank=True, help_text="Additional information about this state")
+    
+    class Meta:
+        abstract = True
+
+    def save(self, *args, **kwargs):
+        if not self.is_active:
+            self.passived_date = timezone.now
+
+        self.last_modification_date = timezone.now
+        # else:
+        # TODO checked unicity of active state for an Item
+        super(CommonEvent, self).save(*args, **kwargs)
+
+
+class State(CommonEvent):
 
     """General state of an Item
     """
     WORKS = 'OK'
     BROKEN = 'BK'
     REPARATION = 'RE'
+    TO_CHECK = 'TC'
     WORKING_STATE = (
         (WORKS, 'Works well'),
         (BROKEN, 'Broken'),
-        (REPARATION, 'In reparation'))
+        (REPARATION, 'In reparation'),
+        (TO_CHECK, 'Have to be verified'))
 
-    name = models.CharField(max_length=200, unique=True)
+    
     working_state = models.CharField(max_length=2,
                                      choices=WORKING_STATE,
                                      default=WORKS)
-    description = models.TextField(null=True, blank=True, help_text="Additional information about this state")
-    active = models.BooleanField(default=True,
-        help_text="The current state of an Item must be active. If it is an old item, it must be unchecked.")
-    creation_date = models.DateField(default=datetime.date.today)
-    passived_date = models.DateField(default=datetime.date.today)
 
 
-class ItemEvent(models.Model):
 
-    """ Event which change the state of an Item
-    """
-    item = models.ForeignKey(Item)
-    state = models.ForeignKey(State)
-    start_date = models.DateField(default=datetime.date.today)
-    start_time = models.TimeField(blank=True)
-    estimated_end_date = models.DateField(default=lambda: datetime.now() + timedelta(days=30), blank=True)
-    estimated_end_time = models.TimeField(blank=True)
-    description = models.TextField()
+class Loan(CommonEvent):
+    """ Manage the way an user can borrow an Item """
+    renter = models.ForeignKey(User, help_text="User who borrow the Item")
+    creator = models.ForeignKey(User, help_text="User who create or validate the loan.")
+    items = models.ManyToManyField(Item, help_text="Items loaned by an user")
+    starting_date = models.DateTimeField('loan starting date', help_text="Starting date of the loan")
+    ending_date = models.DateTimeField('loan ending date', help_text="Ending date of the loan")
+
+
 
 #
 
