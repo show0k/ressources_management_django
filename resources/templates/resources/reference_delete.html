@@ -1,0 +1,17 @@
+{% extends "resources/reference_base.html" %}
+
+{% block title %}
+    Delete {{ reference }}
+{% endblock %}
+
+{% block content %}
+<h1>Delete {{ reference }}</h1>
+
+<form action="" method="post">{% csrf_token %}
+    <p>Are you sure you want to delete {{ reference }}?</p>
+    <input type="submit" value="Confirm" />
+</form>
+
+<a href={% url "reference_detail" reference.pk %}>Cancel</a>
+
+{% endblock %}

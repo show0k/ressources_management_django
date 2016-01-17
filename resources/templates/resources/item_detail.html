@@ -1,0 +1,14 @@
+{% extends "resources/item_base.html" %}
+
+{% block title %}
+    {{ item }}
+{% endblock %}
+
+{% block content %}
+    <h1><a href={% url "item_list" %}>Item</a></h1>
+    <h2>{{ item }} | <a href={% url "item_update" item.pk %}>Update</a> | 
+    <form style="display:inline;" action={% url "item_delete" item.pk %} method="post" onsubmit="return confirm('Are you sure you want to delete {{ item }}?')">{% csrf_token %}
+    <input type="submit" value="Delete" />
+    </form>
+    </h2>
+{% endblock %}

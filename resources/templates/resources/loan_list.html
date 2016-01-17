@@ -1,0 +1,19 @@
+{% extends "resources/loan_base.html" %}
+
+{% block title %}
+    Loans
+{% endblock %}
+
+{% block content %}
+    <h1>Loans</h1>
+    <h2><a href={% url "loan_create" %}>Create new Loan</h2>
+    <ul>
+    {% for loan in loan_list %}
+        <li><a href={% url "loan_detail" loan.pk %}>{{ loan }}</a> | <a href={% url "loan_update" loan.pk %}>Update</a> | <form style="display:inline;" action={% url "loan_delete" loan.pk %} method="post" onsubmit="return confirm('Are you sure you want to delete {{ loan }}?')">{% csrf_token %}
+    <input type="submit" value="Delete" />
+    </form></li>
+    {% empty %}
+        <li>No Loans yet.</li>
+    {% endfor %}
+    </ul>
+{% endblock %}

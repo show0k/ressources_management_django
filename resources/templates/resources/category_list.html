@@ -1,0 +1,19 @@
+{% extends "resources/category_base.html" %}
+
+{% block title %}
+    Categorys
+{% endblock %}
+
+{% block content %}
+    <h1>Categorys</h1>
+    <h2><a href={% url "category_create" %}>Create new Category</h2>
+    <ul>
+    {% for category in category_list %}
+        <li><a href={% url "category_detail" category.pk %}>{{ category }}</a> | <a href={% url "category_update" category.pk %}>Update</a> | <form style="display:inline;" action={% url "category_delete" category.pk %} method="post" onsubmit="return confirm('Are you sure you want to delete {{ category }}?')">{% csrf_token %}
+    <input type="submit" value="Delete" />
+    </form></li>
+    {% empty %}
+        <li>No Categorys yet.</li>
+    {% endfor %}
+    </ul>
+{% endblock %}
