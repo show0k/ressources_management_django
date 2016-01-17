@@ -1,12 +1,13 @@
 import datetime
-import re
+# import re
 
+from django.utils import timezone
 from django.db import models
-from django import forms
-from django.forms import Form, ModelForm, ModelChoiceField, CharField
-from django.utils.html import mark_safe
-from django.core.exceptions import ValidationError
-from django.contrib.auth.models import User
+from ..users.models import User
+# from django import forms
+# from django.forms import Form, ModelForm, ModelChoiceField, CharField
+# from django.utils.html import mark_safe
+# from django.core.exceptions import ValidationError
 
 
 MAX_PRICE_DIGITS = 10
@@ -57,6 +58,7 @@ class Item(models.Model):
         default=0)
     added = models.DateTimeField(auto_now_add=True, editable=False)
     last_edit = models.DateTimeField(auto_now=True, editable=False)
+    active = models.BooleanField(default=True)
 
     def __str__(self):
         if self.name != "":
@@ -91,43 +93,65 @@ class Item(models.Model):
             return str(state)
 
     # Add a Signal
-    def initiate_state(self, state=OK_STATE):
-        state_obj = State.objects.get(name=state)
-        init_evt = ItemEvent(
-            item=self,
-            state=state_obj,
-            start_date=datetime.now(),
-            start_time=datetime.now(),
-            description='New motor.',
-        )
-        init_evt.save()
+    # def initiate_state(self, state=OK_STATE):
+    #     state_obj = State.objects.get(name=state)
+    #     init_evt = ItemEvent(
+    #         item=self,
+    #         state=state_obj,
+    #         start_date=datetime.now(),
+    #         start_time=datetime.now(),
+    #         description='New motor.',
+    #     )
+    #     init_evt.save()
 
 
-class WorkingState(models.Model):
+# class WorkingState(models.Model):
 
-    """Working condition of an item.
-        example : REPARATION, BROKEN, WORKING
-    """
-    name = models.CharField(max_length=200, unique=True)
-    description = models.TextField(null=True, blank=True, help_text="Additional information about this state")
+#     """Working condition of an item.
+#         example : REPARATION, BROKEN, WORKING
+#     """
+#     name = models.CharField(max_length=200, unique=True)
+#     description = models.TextField(null=True, blank=True, help_text="Additional information about this state")
 
-    def __str__(self):
-        return "%s : %s" % (self.name, self.description)
-
+#     def __str__(self):
+#         return "%s : %s" % (self.name, self.description)
 
 
 class CommonEvent(models.Model):
+
     """ Abstract class for Loan and State"""
-    creator = models.ForeignKey(User, help_text="User who create this event")
+    creator = models.ForeignKey(User, related_name='%(class)s_event_created',
+                                on_delete=models.PROTECT,
+                                help_text="User who create this event",
+                                null=True)
     is_active = models.BooleanField('active', default=True)
     creation_date = models.DateTimeField('creation date', default=timezone.now)
     last_modification_date = models.DateTimeField('last modification date', default=timezone.now)
-    passived_date = models.DateTimeField('passived date', null=True, default=None,
-                                     help_text="Date were this state became inactive. Automatically set when the is_active field become unchecked.")
+    passived_date = models.DateTimeField('passived date', null=True, blank=True, default=None,
+                                         help_text="Date were this state became inactive. Automatically set when the is_active field become unchecked.")
     description = models.TextField(null=True, blank=True, help_text="Additional information about this state")
-    
+
     class Meta:
         abstract = True
+
+
+class State(CommonEvent):
+
+    """General state of an Item
+    """
+    WORKS = 'OK'
+    BROKEN = 'HS'
+    REPARATION = 'RE'
+    TO_CHECK = 'TC'
+    WORKING_STATE = (
+        (WORKS, 'Works well'),
+        (BROKEN, 'Broken'),
+        (REPARATION, 'In reparation'),
+        (TO_CHECK, 'Undetermined'))
+
+    working_state = models.CharField(max_length=2,
+                                     choices=WORKING_STATE,
+                                     default=WORKS)
 
     def save(self, *args, **kwargs):
         if not self.is_active:
@@ -136,40 +160,44 @@ class CommonEvent(models.Model):
         self.last_modification_date = timezone.now
         # else:
         # TODO checked unicity of active state for an Item
-        super(CommonEvent, self).save(*args, **kwargs)
-
-
-class State(CommonEvent):
-
-    """General state of an Item
-    """
-    WORKS = 'OK'
-    BROKEN = 'BK'
-    REPARATION = 'RE'
-    TO_CHECK = 'TC'
-    WORKING_STATE = (
-        (WORKS, 'Works well'),
-        (BROKEN, 'Broken'),
-        (REPARATION, 'In reparation'),
-        (TO_CHECK, 'Have to be verified'))
-
-    
-    working_state = models.CharField(max_length=2,
-                                     choices=WORKING_STATE,
-                                     default=WORKS)
-
+        super(State, self).save(*args, **kwargs)
 
 
 class Loan(CommonEvent):
+
     """ Manage the way an user can borrow an Item """
-    renter = models.ForeignKey(User, help_text="User who borrow the Item")
-    creator = models.ForeignKey(User, help_text="User who create or validate the loan.")
+    LOW = 0
+    NORMAL = 1
+    HIGH = 3
+
+    PRIORITIES = (
+        (LOW, 'Low'),
+        (NORMAL, 'Normal'),
+        (HIGH, 'High'),
+    )
+
+    priority = models.IntegerField(
+        default=NORMAL, choices=PRIORITIES,
+        help_text="Priority of the loan. Only staff renter should have high priority")
+    renter = models.ForeignKey(User,
+                               on_delete=models.PROTECT,
+                               help_text="User who borrow the Item")
     items = models.ManyToManyField(Item, help_text="Items loaned by an user")
     starting_date = models.DateTimeField('loan starting date', help_text="Starting date of the loan")
     ending_date = models.DateTimeField('loan ending date', help_text="Ending date of the loan")
 
+    def __str__(self):
+        items_str = [item.name for item in self.items.all()]
+        return "[%s] %s for %s" % (self.PRIORITIES[self.priority][1], ' - '.join(items_str), self.renter)
 
+ #   def save(self, *args, **kwargs):
+ #       if not self.is_active:
+ #          self.passived_date = timezone.now
 
+ #       self.last_modification_date = timezone.now
+        # else:
+        # TODO checked unicity of active state for an Item
+        # super(Loan, self).save(*args, **kwargs)
 #
 
 

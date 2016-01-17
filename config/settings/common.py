@@ -215,8 +215,7 @@ WSGI_APPLICATION = 'config.wsgi.application'
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend',
-    'django_auth_ldap.backend.LDAPBackend',
-    'django.contrib.auth.backends.ModelBackend',
+    # 'django_auth_ldap.backend.LDAPBackend',
 )
 
 
