@@ -15,6 +15,8 @@ OK_STATE = 'OK'
 
 
 class Category(models.Model):
+    class Meta:
+        verbose_name_plural = "categories"
 
     """Robot, motor, sensor, ..."""
     name = models.CharField(max_length=70)
