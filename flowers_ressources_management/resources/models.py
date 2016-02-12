@@ -60,7 +60,7 @@ class Item(models.Model):
         default=0)
     added = models.DateTimeField(auto_now_add=True, editable=False)
     last_edit = models.DateTimeField(auto_now=True, editable=False)
-    active = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=True)
 
     def __str__(self):
         if self.name != "":

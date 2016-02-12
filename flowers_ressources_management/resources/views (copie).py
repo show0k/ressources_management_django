@@ -6,10 +6,6 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.template.context import RequestContext
 
-from django.views.generic.list import ListView
-
-
-from .models import Items
 
 
 # def logout_mm(request):

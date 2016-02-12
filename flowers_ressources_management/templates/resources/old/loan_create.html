@@ -1,0 +1,16 @@
+{% extends "resources/loan_base.html" %}
+
+{% block title %}
+    Create Loan
+{% endblock %}
+
+{% block content %}
+<h1><a href={% url "loan_list" %}>Loan</a></h1>
+<h2>Create Loan</h2>
+
+<form action="" method="post">{% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Create" />
+</form>
+<a href={% url "loan_list" %}>Cancel</a>
+{% endblock %}

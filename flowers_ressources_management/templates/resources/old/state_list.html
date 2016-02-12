@@ -1,0 +1,19 @@
+{% extends "resources/state_base.html" %}
+
+{% block title %}
+    States
+{% endblock %}
+
+{% block content %}
+    <h1>States</h1>
+    <h2><a href={% url "state_create" %}>Create new State</h2>
+    <ul>
+    {% for state in state_list %}
+        <li><a href={% url "state_detail" state.pk %}>{{ state }}</a> | <a href={% url "state_update" state.pk %}>Update</a> | <form style="display:inline;" action={% url "state_delete" state.pk %} method="post" onsubmit="return confirm('Are you sure you want to delete {{ state }}?')">{% csrf_token %}
+    <input type="submit" value="Delete" />
+    </form></li>
+    {% empty %}
+        <li>No States yet.</li>
+    {% endfor %}
+    </ul>
+{% endblock %}
