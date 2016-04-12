@@ -1,5 +1,6 @@
-import datetime
+from datetime import datetime
 # import re
+import pytz
 
 from django.utils import timezone
 from django.db import models
@@ -131,7 +132,9 @@ class CommonEvent(models.Model):
     last_modification_date = models.DateTimeField('last modification date', default=timezone.now)
     passived_date = models.DateTimeField('passived date', null=True, blank=True, default=None,
                                          help_text="Date were this state became inactive. Automatically set when the is_active field become unchecked.")
+    # short_description = models.TextField(null=True, blank=True, help_text="Additional information about this state")
     description = models.TextField(null=True, blank=True, help_text="Additional information about this state")
+
 
     class Meta:
         abstract = True
@@ -187,6 +190,20 @@ class Loan(CommonEvent):
     items = models.ManyToManyField(Item, help_text="Items loaned by an user")
     starting_date = models.DateTimeField('loan starting date', help_text="Starting date of the loan")
     ending_date = models.DateTimeField('loan ending date', help_text="Ending date of the loan")
+
+    
+    def is_ended(self):
+        print(datetime.now(pytz.timezone("UTC")), self.ending_date)
+        return datetime.now(pytz.timezone("UTC")) > self.ending_date
+
+    
+    def is_ongoing(self):
+        return self.starting_date <= datetime.now(pytz.timezone("UTC")) <= self.ending_date
+
+    
+    def has_not_started(self):
+        return self.starting_date > datetime.now(pytz.timezone("UTC"))
+
 
     def __str__(self):
         items_str = [item.name for item in self.items.all()]

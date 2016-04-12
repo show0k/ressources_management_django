@@ -10,11 +10,12 @@ Basics ideas:
 * [ ] synchroniser les vues en ical
 * [ ] création automatique d'un State lors de la création d'un item
 * [ ] envoie de mails automatique avec un template pour l'emprunt
-
+* [ ] loans with short and full description
 ### Views:
-### Anyone
+### Annonymus user
 * [ ] list of items
-* [ ] detail of an item
+* [ ] detail of an item -> now
+* [ ] ical of all loans
 * [ ] list of loans
 * [ ] detail of a loan
 * 

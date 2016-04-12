@@ -6,9 +6,22 @@
 
 {% block content %}
     <h1><a href={% url "loan_list" %}>Loan</a></h1>
-    <h2>{{ loan }} | <a href={% url "loan_update" loan.pk %}>Update</a> | 
+    <h2> {{ loan }} </h2>
+    <!-- <p>Loan of {{ loan.items }} created by {{ loan.creator.username }} for {{ loan.renter.username }}</p> -->
+    <p>From {{ loan.starting_date | date }} to {{ loan.ending_date | date }} created by {{ loan.creator.username }} for {{ loan.renter }}, priority is {{ loan.get_priority_display }}.</p>
+    <p> {{ loan.description }}</p>
+    <h3> Items </h3>
+    {% for robot in loan.items.all %}
+   	<li>{{ robot }}</li>
+    {% endfor %}
+    {% if user.is_authenticated %}
+
+    <h4><a href={% url "loan_update" loan.pk %}>Update</a> | 
     <form style="display:inline;" action={% url "loan_delete" loan.pk %} method="post" onsubmit="return confirm('Are you sure you want to delete {{ loan }}?')">{% csrf_token %}
     <input type="submit" value="Delete" />
+
     </form>
-    </h2>
+    </h4>
+    {% endif %}
+
 {% endblock %}

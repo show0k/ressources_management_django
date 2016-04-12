@@ -1,16 +1,33 @@
 {% extends "resources/loan_base.html" %}
+{% load bootstrap3 %}
+
+<script type="text/javascript" src="/my_admin/jsi18n/"></script>
+<script type="text/javascript" src="/media/admin/js/core.js"></script>
+
+<link rel="stylesheet" type="text/css" href="/media/admin/css/forms.css"/>
+<link rel="stylesheet" type="text/css" href="/media/admin/css/base.css"/>
+<link rel="stylesheet" type="text/css" href="/media/admin/css/global.css"/>
+<link rel="stylesheet" type="text/css" href="/media/admin/css/widgets.css"/>
 
 {% block title %}
     Create Loan
 {% endblock %}
 
+
+
+
 {% block content %}
+<!-- Form media -->
+{{ form.media }}
 <h1><a href={% url "loan_list" %}>Loan</a></h1>
 <h2>Create Loan</h2>
 
-<form action="" method="post">{% csrf_token %}
-    {{ form.as_p }}
-    <input type="submit" value="Create" />
+
+<form role="form" action="" method="post">{% csrf_token %}
+    {% bootstrap_form form %}
+    <div class="form-group">
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
 </form>
 <a href={% url "loan_list" %}>Cancel</a>
 {% endblock %}

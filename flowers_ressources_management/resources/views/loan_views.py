@@ -121,7 +121,8 @@ class LoanCreateView(CreateView):
 
 class LoanUpdateView(UpdateView):
     model = Loan
-    fields = ['creator', 'is_active', 'creation_date', 'last_modification_date', 'passived_date', 'description', 'priority', 'renter', 'starting_date', 'ending_date']
+    form_class = LoanForm
+    # fields = ['creator', 'is_active', 'creation_date', 'last_modification_date', 'passived_date', 'description', 'priority', 'renter', 'starting_date', 'ending_date']
     template_name = "resources/loan_update.html"
     initial = {}
     slug_field = 'slug'

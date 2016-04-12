@@ -42,7 +42,10 @@ THIRD_PARTY_APPS = (
     'allauth',  # registration
     'allauth.account',  # registration
     'allauth.socialaccount',  # registration
-    'django_baker', #
+    'datetimewidget',
+    'django_baker',
+    'bootstrap3',
+    'bootstrapform',
 )
 
 # Apps specific for this project go here.
@@ -103,7 +106,7 @@ MANAGERS = ADMINS
 # ------------------------------------------------------------------------------
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#databases
 # DATABASES = {
-#     # Raises ImproperlyConfigured exception if DATABASE_URL not in os.environ
+# Raises ImproperlyConfigured exception if DATABASE_URL not in os.environ
 #     'default': env.db("DATABASE_URL", default="postgres:///flowers_ressources_management"),
 # }
 # DATABASES['default']['ATOMIC_REQUESTS'] = True
@@ -120,7 +123,7 @@ DATABASES = {
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # although not all choices may be available on all operating systems.
 # In a Windows environment this must be set to your system time zone.
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Paris'
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#language-code
 LANGUAGE_CODE = 'en-us'
@@ -129,7 +132,7 @@ LANGUAGE_CODE = 'en-us'
 SITE_ID = 1
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#use-i18n
-USE_I18N = True
+USE_I18N = False
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#use-l10n
 USE_L10N = True
@@ -218,6 +221,13 @@ AUTHENTICATION_BACKENDS = (
     # 'django_auth_ldap.backend.LDAPBackend',
 )
 
+# DATETIME_INPUT_FORMATS = [
+#     '%d/%m/%Y %H:%M'# '10/25/2006 14:30'
+#     ]
+
+DATETIME_INPUT_FORMATS = (
+    '%d/%m/%Y %H:%M',     # '21-03-2014 17:59'
+)
 
 # Some really nice defaults
 ACCOUNT_AUTHENTICATION_METHOD = 'username'
@@ -243,7 +253,7 @@ ADMIN_URL = r'^admin/'
 # AUTH_LDAP_BIND_PASSWORD = ""
 # AUTH_LDAP_USER_DN_TEMPLATE = "uid=%(user)s,ou=bordeaux,ou=futurs,ou=users,dc=futurs,dc=inria,dc=fr"
 
-# # Internet :
+# Internet :
 # AUTHENTICATION_BACKENDS = (
 #     'django_auth_ldap.backend.LDAPBackend',
 # )
@@ -262,7 +272,7 @@ ADMIN_URL = r'^admin/'
 # logger.addHandler(logging.StreamHandler())
 # logger.setLevel(logging.DEBUG)
 
-# # Environment specific configuration
+# Environment specific configuration
 
 # if not 'DEVEL' in os.environ:
 #     DEBUG = False
@@ -272,10 +282,10 @@ ADMIN_URL = r'^admin/'
 #     MEDIA_ROOT = os.path.join(ROOT_PATH, 'srv/media/')
 #     if os.environ['DEVEL'] == 'ldap':
 #         print 'Debug mode with ldap.'
-#         # should be redirected to real LDAP through ssh tunnel
+# should be redirected to real LDAP through ssh tunnel
 #         AUTH_LDAP_SERVER_URI = "ldaps://127.0.0.1:9999"
-#         # This is to avoid LDAP fail due to self-signed certificates
-#         # The good way to solve it would be to set the correct certificates
+# This is to avoid LDAP fail due to self-signed certificates
+# The good way to solve it would be to set the correct certificates
 #         AUTH_LDAP_GLOBAL_OPTIONS = {ldap.OPT_X_TLS_REQUIRE_CERT: ldap.OPT_X_TLS_NEVER}
 #     else:
 #         AUTHENTICATION_BACKENDS = (
