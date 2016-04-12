@@ -6,19 +6,20 @@ Basics ideas:
 
 ## TODO: 
 
-* [ ] faire des permissions de création d'emprunt
+* [X] faire des permissions de création d'emprunt
 * [ ] synchroniser les vues en ical
 * [ ] création automatique d'un State lors de la création d'un item
 * [ ] envoie de mails automatique avec un template pour l'emprunt
-* [ ] loans with short and full description
+* [ ] add a short description for loans
+
 ### Views:
-### Annonymus user
-* [ ] list of items
-* [ ] detail of an item -> now
+#### Annonymus user
+* [ ] list of items
+* [ ] detail of an item
 * [ ] ical of all loans
-* [ ] list of loans
-* [ ] detail of a loan
-* 
+* [X] list of loans
+* [X] detail of a loan
+
 #### Staff
 * [ ] créer un user de droits limité
 * [ ] faire un emprunt
